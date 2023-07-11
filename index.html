@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prayer_Times</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div style="height: 98vh; margin-bottom: 50px;">
+    <div>
+      <h1 id="city">سوهاج</h1>
+      <h6 id="date">الجمعة 24 نوفمبر</h6>
+    </div>
+    <hr style="margin: 0 10px; border-color:white; margin-bottom: 100px;">
+    <div class="cards" style="margin: 10px;">
+      <div class="card">
+        <h6 style="background:linear-gradient(45deg,#5709ee,#7a37bf); width: 100%; margin: 0;">الفجر</h6>
+        <div style="display: flex;
+              justify-content: center;
+              align-items: center; height: 150px;"><span style="font-size: 50px;font-weight: 600;"
+            id="fajr">4:30</span></div>
+      </div>
+      <div class="card">
+        <h6 style="background:linear-gradient(45deg,#5709ee,#7a37bf); width: 100%; margin: 0; ">الشروق</h6>
+        <div style="display: flex;
+                  justify-content: center;
+                  align-items: center; height: 150px;"><span style="font-size: 50px;font-weight: 600;"
+            id="sunrise">4:30</span></div>
+      </div>
+      <div class="card">
+        <h6 style="background:linear-gradient(45deg,#5709ee,#7a37bf); width: 100%; margin: 0; ">الضهر</h6>
+        <div style="display: flex;
+                      justify-content: center;
+                      align-items: center; height: 150px;"><span style="font-size: 50px;font-weight: 600;"
+            id="dhuhr">4:30</span></div>
+      </div>
+      <div class="card">
+        <h6 style="background:linear-gradient(45deg,#5709ee,#7a37bf); width: 100%; margin: 0; ">العصر</h6>
+        <div style="display: flex;
+                          justify-content: center;
+                          align-items: center; height: 150px;"><span style="font-size: 50px;font-weight: 600;"
+            id="asr">4:30</span></div>
+      </div>
+      <div class="card">
+        <h6 style="background:linear-gradient(45deg,#5709ee,#7a37bf); width: 100%; margin: 0; ">المغرب</h6>
+        <div style="display: flex;
+                              justify-content: center;
+                              align-items: center; height: 150px;"><span style="font-size: 50px;font-weight: 600;"
+            id="sunset">4:30</span></div>
+      </div>
+      <div class="card">
+        <h6 style="background:linear-gradient(45deg,#5709ee,#7a37bf); width: 100%; margin: 0; ">العشاء</h6>
+        <div style="display: flex;
+                                  justify-content: center;
+                                  align-items: center; height: 150px;"><span style="font-size: 50px;font-weight: 600;"
+            id="isha">4:30</span></div>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 100px;">
+      <select name="" id="cities"
+        style="width: 300px; height: 35px;  background: #240165; font-size: 20px;font-weight: 400; font-family: Tajawal; border-radius: 20px; color: white;">
+
+
+      </select>
+    </div>
+  </div>
+</body>
+<!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
+<script src="../node_modules/axios/dist/axios.min.js"></script>
+<script>
+  let cities = [{ name: "Sohag", arabicName: "سوهاج", country: "Eg" }, { name: "Al Riyad", arabicName: "الرياض", country: "AS" },
+  { name: "Ash Sharqiyah", arabicName: "الشرقية", country: "AS" }, { name: "Al Qasim", arabicName: "القصيم", country: "AS" },
+  { arabicName: "جازان", name: "Jāzān", country: "SA" }]
+  for (const city of cities) {
+    const content = `<option>${city.arabicName}</option>`
+    document.getElementById("cities").innerHTML += content
+  }
+  document.getElementById("cities").addEventListener("change", function () {
+    let cityName = ""
+    let countryName = ""
+    for (const city of cities) {
+      if (city.arabicName == this.value) {
+        cityName = city.name
+        countryName = city.country
+      }
+    }
+    getPrayersTimingsOfCity(cityName, countryName)
+    document.getElementById("city").innerHTML = this.value
+  })
+  function getPrayersTimingsOfCity(cityName, countryName) {
+    let params = {
+      country: countryName,
+      city: cityName
+    }
+    axios.get('http://api.aladhan.com/v1/timingsByCity', {
+      params: params
+    })
+      .then(function (response) {
+        const timings = response.data.data.timings
+        fillTimeForPrayer("fajr", timings.Fajr)
+        fillTimeForPrayer("sunrise", timings.Sunrise)
+        fillTimeForPrayer("dhuhr", timings.Dhuhr)
+        fillTimeForPrayer("asr", timings.Asr)
+        fillTimeForPrayer("sunset", timings.Sunset)
+        fillTimeForPrayer("isha", timings.Isha)
+        // console.log(response.data.data.timings);
+        const readableDate = response.data.data.date.readable
+        const weekDay = response.data.data.date.hijri.weekday.ar
+        // console.log(readableDate+"  "+weekDay);
+        document.getElementById("date").innerHTML = weekDay + "  " + readableDate
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+  }
+  getPrayersTimingsOfCity("Sohag", "EG")
+  function fillTimeForPrayer(id, time) {
+    document.getElementById(id).innerHTML = time
+  }
+</script>
+
+</html>

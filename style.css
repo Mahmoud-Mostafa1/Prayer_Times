@@ -1,0 +1,45 @@
+body {
+  font-family: "Tajawal", sans-serif;
+  direction: rtl;
+  background: linear-gradient(45deg, #240165, #05001c);
+}
+
+h1 {
+  color: white;
+  margin: 0 10px;
+  font-size: 100px;
+  font-weight: 400;
+}
+h6 {
+  color: white;
+  margin: 0 10px;
+  font-size: 40px;
+  font-weight: 400;
+}
+.cards {
+  display: flex;
+  justify-content: space-around;
+}
+
+.card {
+  width: 12%;
+  background-color: white;
+  font-size: 20px;
+  box-shadow: 0 10px 5px rgb(0 0 0 /30%);
+  border-radius: 10px;
+  overflow: hidden;
+}
+@media (max-width: 767px) {
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    text-align: center;
+  }
+  .card {
+    width: 100%;
+  }
+  select {
+    margin-bottom: 48px;
+  }
+}
